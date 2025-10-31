@@ -7,7 +7,7 @@ public class PlayerHealth : MonoBehaviourPun
 {
     [Header("Health Set Up")]
     public int maxHealth;
-    private int health;
+    [HideInInspector] public int health;
 
     [Header("UI Set Up")]
     public TextMeshProUGUI healthText;
@@ -33,17 +33,23 @@ public class PlayerHealth : MonoBehaviourPun
     {
         health = Mathf.Max(0, health -= _damage);
 
+        //if this player is local
         if (photonView.IsMine)
         {
             UpdateUI();
 
-            /*
             if (health <= 0)
             {
                 RoomManager.Instance.RespawnPlayer();
                 PhotonNetwork.Destroy(gameObject);
             }
-            */ //// NOT PROVIDED FOR
+        }
+        else //if this player is NOT local
+        {
+            if (health <= 0)
+            {
+                gameObject.SetActive(false);    //disable the player from local view, since network destruction can take longer
+            }
         }
         
     }

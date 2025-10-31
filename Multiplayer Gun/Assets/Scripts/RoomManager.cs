@@ -3,6 +3,7 @@ using Photon.Pun;
 
 public class RoomManager : MonoBehaviourPunCallbacks
 {
+    public static RoomManager Instance { get; private set; }
     public string roomCode = "Map1";
     public GameObject player;
     public Transform spawnPoint;
@@ -10,6 +11,19 @@ public class RoomManager : MonoBehaviourPunCallbacks
     public GameObject roomCamera;
 
     private string currentName;
+
+
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this) {
+            Destroy(gameObject);
+        }
+        else {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+    }
 
 
 
@@ -58,5 +72,11 @@ public class RoomManager : MonoBehaviourPunCallbacks
         PhotonNetwork.Instantiate(player.name, spawnPoint.position, Quaternion.identity);
         roomCamera.SetActive(false);
         PhotonNetwork.LocalPlayer.NickName = currentName;
+    }
+
+
+    public void RespawnPlayer()
+    {
+        PhotonNetwork.Instantiate(player.name, spawnPoint.position, Quaternion.identity);
     }
 }
